@@ -36,10 +36,17 @@ function classNames(...classes) {
 export default function NewShipment() {
   const [packageCount, setPackageCount] = useState(2);
   const [billDuty, setBillDuty] = useState("receiver");
+
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [pickupRequired, setPickupRequired] = useState(false);
+  const [makeCommercialInvoice, setMakeCommercialInvoice] = useState(false);
+  const [thirdPartyBilling, setThirdPartyBilling] = useState(false);
+  const [cashOnDelivery, setCashOnDelivery] = useState(false);
+
   const handleChange = (event) => {
     setBillDuty(event.target.value);
   };
-  const [checked, setChecked] = useState(false);
+
   return (
     <>
       <div className="max-w-7xl mx-auto flex flex-col space-y-6 pb-32">
@@ -459,12 +466,150 @@ export default function NewShipment() {
         </Card>
 
         <Card>
-          <CardTitle title="Third Party Billing & Cash On Delivery" />
+          <CardTitle title="Third Party Billing & COD" />
           <CardContent>
-            <Toggle label="Third party billing" />
+            <div className="flex space-x-4 place-items-center">
+              <button
+                type="button"
+                onClick={() => setThirdPartyBilling(!thirdPartyBilling)}
+                className={classNames(
+                  "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                  thirdPartyBilling ? "bg-red-600" : "bg-gray-200"
+                )}
+              >
+                <span
+                  className={classNames(
+                    "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200",
+                    thirdPartyBilling ? "translate-x-5" : "translate-x-0"
+                  )}
+                ></span>
+              </button>
+              <div className="font-base text-gray-800">Third Party Billing</div>
+            </div>
+            {thirdPartyBilling && (
+              <div className="w-full grid grid-cols-5 gap-x-4 pt-6">
+                <div>
+                  <label className="text-xs pb-2 font-medium text-gray-700">
+                    Name
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      placeholder="Name..."
+                      type="text"
+                      className="w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs pb-2 font-medium text-gray-700">
+                    Account Number
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      placeholder="Account Number..."
+                      type="text"
+                      className="w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs pb-2 font-medium text-gray-700">
+                    Postal Code
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      placeholder="Postal Code..."
+                      type="text"
+                      className="w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs pb-2 font-medium text-gray-700">
+                    Country
+                  </label>
+                  <div className="mt-1 ">
+                    <input
+                      placeholder="Country..."
+                      type="text"
+                      className="w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs pb-2 font-medium text-gray-700">
+                    Carrier
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      placeholder="Carrier..."
+                      type="text"
+                      className="w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
           <CardContent>
-            <Toggle label="Cash On Delivery (COD) - extra fee" />
+            <div className="flex space-x-4 place-items-center">
+              <button
+                type="button"
+                onClick={() => setCashOnDelivery(!cashOnDelivery)}
+                className={classNames(
+                  "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                  cashOnDelivery ? "bg-red-600" : "bg-gray-200"
+                )}
+              >
+                <span
+                  className={classNames(
+                    "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200",
+                    cashOnDelivery ? "translate-x-5" : "translate-x-0"
+                  )}
+                ></span>
+              </button>
+              <div className="font-base text-gray-800 text-right py-2 pr-6">
+                COD{" "}
+                <span className="ml-4 inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                  $ Extra Fee
+                </span>
+              </div>
+              {cashOnDelivery && (
+                <div className="flex place-items-center space-x-4">
+                  <div className="relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input
+                      type="text"
+                      name="price"
+                      className="focus:ring-red-500 focus:border-red-500 w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                      placeholder="0.00"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span
+                        className="text-gray-500 sm:text-sm"
+                        id="price-currency"
+                      >
+                        USD
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative flex items-start">
+                    <div className="ml-4 flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">Secured Payment</div>
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -684,158 +829,228 @@ export default function NewShipment() {
           <CardContent>
             <div className="space-x-4 flex items-center">
               <span className="font-semibold">Commerical Invoice</span>
-              <Toggle label="Create commercial invoice through our system" />
+              <div className="flex space-x-4 place-items-center">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMakeCommercialInvoice(!makeCommercialInvoice)
+                  }
+                  className={classNames(
+                    "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                    makeCommercialInvoice ? "bg-red-600" : "bg-gray-200"
+                  )}
+                >
+                  <span
+                    className={classNames(
+                      "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200",
+                      makeCommercialInvoice ? "translate-x-5" : "translate-x-0"
+                    )}
+                  ></span>
+                </button>
+                <div className="font-base text-gray-800">
+                  Create commercial invoice through our system
+                </div>
+              </div>
             </div>
-
-            <div className="w-full flex justify-between items-end pt-8">
-              <div className="flex -space-x-px">
+            {!makeCommercialInvoice && (
+              <div className="flex items-center pt-8">
                 <div>
                   <label className="text-xs pb-2 font-medium text-gray-700">
-                    Item
+                    Value{" "}
+                    <span className="italic text-gray-500 font-light">
+                      required
+                    </span>
                   </label>
-                  <div className="mt-1">
-                    <div
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input
                       type="text"
-                      className="w-16 shadow-sm sm:text-sm border-gray-300 relative rounded-l-md focus:z-10"
-                    >
-                      #1
+                      name="price"
+                      className="focus:ring-red-500 focus:border-red-500 w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                      placeholder="0.00"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span
+                        className="text-gray-500 sm:text-sm"
+                        id="price-currency"
+                      >
+                        USD
+                      </span>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    Description
+
+                <div className="ml-4 w-72">
+                  <label className="text-xs pb-2 font-medium text-gray-700">
+                    Description{" "}
+                    <span className="italic text-gray-500 font-light">
+                      required
+                    </span>
                   </label>
-                  <div className="mt-1">
+                  <div className="mt-1 ">
                     <input
-                      placeholder="Enter description..."
+                      placeholder="Description..."
                       type="text"
-                      className="w-56 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
+                      className="w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
                     />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    HTS#
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      placeholder="HTS#"
-                      className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    COO
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      placeholder="COO..."
-                      className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    QTY
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="number"
-                      defaultValue={1}
-                      className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    UNIT
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      placeholder="ea."
-                      className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    VAL/UNIT
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      placeholder="$0.00"
-                      className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    TOTAL WT.
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="text"
-                      placeholder="Total weight..."
-                      className="w-32 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="  text-xs pb-2 font-medium text-gray-700">
-                    TOTAL
-                  </label>
-                  <div className="mt-1">
-                    <div
-                      type="text"
-                      placeholder=""
-                      className="bg-gray-100 w-48 shadow-sm sm:text-sm border-gray-300 relative rounded-r-md"
-                    >
-                      $1332.00
-                    </div>
                   </div>
                 </div>
               </div>
-              <Button label="Remove" />
-            </div>
-
-            <div className="pt-4">
-              <Button label="+ Add item" />
-            </div>
+            )}
+            {makeCommercialInvoice && (
+              <div>
+                <div className="w-full flex justify-between items-end pt-8">
+                  <div className="flex -space-x-px">
+                    <div>
+                      <label className="text-xs pb-2 font-medium text-gray-700">
+                        Item
+                      </label>
+                      <div className="mt-1">
+                        <div
+                          type="text"
+                          className="w-16 shadow-sm sm:text-sm border-gray-300 relative rounded-l-md focus:z-10"
+                        >
+                          #1
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        Description
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          placeholder="Enter description..."
+                          type="text"
+                          className="w-56 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        HTS#
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          placeholder="HTS#"
+                          className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        COO
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          placeholder="COO..."
+                          className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        QTY
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="number"
+                          defaultValue={1}
+                          className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        UNIT
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          placeholder="ea."
+                          className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        VAL/UNIT
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          placeholder="$0.00"
+                          className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative  focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        TOTAL WT.
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          placeholder="Total weight..."
+                          className="w-32 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="  text-xs pb-2 font-medium text-gray-700">
+                        TOTAL
+                      </label>
+                      <div className="mt-1">
+                        <div
+                          type="text"
+                          placeholder=""
+                          className="bg-gray-100 w-48 shadow-sm sm:text-sm border-gray-300 relative rounded-r-md"
+                        >
+                          $1332.00
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <Button label="Remove" />
+                </div>
+                <div className="pt-4">
+                  <Button label="+ Add item" />
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardTitle title={sections["notification"]}>
-            <div className="flex space-x-4 place-items-center h-12">
+            <div className="flex space-x-4 place-items-center">
               <div className="font-base text-gray-800 text-right">
-                {!checked
+                {!emailNotifications
                   ? "Activate Email Notifications"
                   : "Disable Email Notifications"}
               </div>
               <button
                 type="button"
-                onClick={() => setChecked(!checked)}
+                onClick={() => setEmailNotifications(!emailNotifications)}
                 className={classNames(
                   "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-                  checked ? "bg-red-600" : "bg-gray-200"
+                  emailNotifications ? "bg-red-600" : "bg-gray-200"
                 )}
               >
                 <span
                   className={classNames(
                     "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200",
-                    checked ? "translate-x-5" : "translate-x-0"
+                    emailNotifications ? "translate-x-5" : "translate-x-0"
                   )}
                 ></span>
               </button>
             </div>
           </CardTitle>
-          {checked && (
+          {emailNotifications && (
             <CardContent>
               <div className="rounded-md bg-blue-50 p-4">
                 <div className="flex">
@@ -861,7 +1076,32 @@ export default function NewShipment() {
 
         <Card>
           <CardTitle title={sections["confirm"]}>
-            <Toggle label="This shipment requires pickup" left />
+            <div className="flex space-x-4 place-items-center">
+              {pickupRequired && (
+                <div className="rounded-md bg-red-50 px-4 py-2 text-md text-red-700">
+                  You will be prompted to enter a pickup date and time after
+                  clicking confirm and print.
+                </div>
+              )}
+              <div className="font-base text-gray-800 text-right">
+                This shipment requires pickup
+              </div>
+              <button
+                type="button"
+                onClick={() => setPickupRequired(!pickupRequired)}
+                className={classNames(
+                  "relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                  pickupRequired ? "bg-red-600" : "bg-gray-200"
+                )}
+              >
+                <span
+                  className={classNames(
+                    "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200",
+                    pickupRequired ? "translate-x-5" : "translate-x-0"
+                  )}
+                ></span>
+              </button>
+            </div>
           </CardTitle>
           <CardContent>
             <div className="flex justify-between items-center">
