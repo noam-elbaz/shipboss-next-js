@@ -1,12 +1,10 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import Logo from "../components/Logo";
-import LoginButton from "./login-btn";
 
 export const navigation = [
   { name: "New Shipment", href: "/new-shipment", current: false },
@@ -62,7 +60,6 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <LoginButton />
                 <Menu as="div" className="ml-3 relative">
                   <div>
                     <Menu.Button className="p-1 text-gray-400 bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ">
