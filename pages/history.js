@@ -15,6 +15,7 @@ export default function History() {
       <div className="max-w-7xl mx-auto">
         <Card>
           <CardTitle title={navigation[3].name} />
+          
           <CardActions>
             <div className="flex space-x-2">
               <InputSearch placeholder="Tracking number..." />

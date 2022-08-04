@@ -7,12 +7,12 @@ import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import Logo from "../components/Logo";
 
 export const navigation = [
-  { name: "New Shipment", href: "/new-shipment", current: false },
-  { name: "Bulk Shipments", href: "/bulk-shipments", current: false },
-  { name: "Address Book", href: "/address-book", current: false },
-  { name: "History", href: "/history", current: true },
-  { name: "Pickups", href: "/pickups", current: false },
-  { name: "Admin", href: "/admin", current: false },
+  { name: "New Shipment", href: "/new-shipment" },
+  { name: "Bulk Shipments", href: "/bulk-shipments" },
+  { name: "Address Book", href: "/address-book" },
+  { name: "History", href: "/history" },
+  { name: "Pickups", href: "/pickups" },
+  { name: "Admin", href: "/admin" },
 ];
 
 const userNavigation = [
@@ -36,7 +36,14 @@ export default function Navbar() {
           <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex">
-                <div className="flex-shrink-0 flex items-center">
+                <div
+                  className={classNames(
+                    "flex-shrink-0 flex items-center border-b-2",
+                    router.asPath === "/"
+                      ? "border-red-500 text-red-500"
+                      : "border-transparent"
+                  )}
+                >
                   <Link href="/">
                     <Logo className="w-32 h-auto" />
                   </Link>

@@ -1,7 +1,9 @@
-import React from 'react'
+import Admin from "./index";
 
-export default function rates() {
+export default function invoices() {
   return (
-    <div>rates</div>
-  )
+    <Admin>
+      <div className="flex space-x-2">RATES</div>
+    </Admin>
+  );
 }

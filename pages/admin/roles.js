@@ -1,5 +1,9 @@
-import React from "react";
+import Admin from "./index";
 
-export default function roles() {
-  return <div>roles</div>;
+export default function invoices() {
+  return (
+    <Admin>
+      <div className="flex space-x-2">ROLES</div>
+    </Admin>
+  );
 }
