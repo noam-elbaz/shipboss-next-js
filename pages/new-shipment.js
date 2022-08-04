@@ -3,7 +3,6 @@ import Card from "../components/Card";
 import CardActions from "../components/CardActions";
 import CardContent from "../components/CardContent";
 import CardTitle from "../components/CardTitle";
-import { SwitchHorizontalIcon } from "@heroicons/react/outline";
 import { InformationCircleIcon, CheckCircleIcon } from "@heroicons/react/solid";
 import DropdownFilterPeople from "../components/DropdownFilterPeople";
 import Button from "../components/Button";
@@ -610,7 +609,7 @@ export default function NewShipment() {
         <Card>
           <CardTitle title="Service Plans">
             <div className="space-x-4">
-              <span className="text-left">Selected Plan: #{selectedPlan}</span>
+              <span className="text-left text-gray-400 italic">(would be nice to have a big empty state to remind user to  select from / to) Selected Plan: #{selectedPlan}</span>
               <Button label="Show All Plans" />
             </div>
           </CardTitle>

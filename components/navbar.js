@@ -12,11 +12,11 @@ export const navigation = [
   { name: "Address Book", href: "/address-book" },
   { name: "History", href: "/history" },
   { name: "Pickups", href: "/pickups" },
-  { name: "Admin", href: "/admin" },
+  { name: "Admin", href: "/admin/invoices" },
 ];
 
 const userNavigation = [
-  { name: "Settings", href: "/settings" },
+  { name: "Settings", href: "/settings/general" },
   { name: "Sign out", href: "/signout" },
 ];
 

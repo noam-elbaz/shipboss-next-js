@@ -5,7 +5,7 @@ export default function Page() {
     <>
       <div className="max-w-7xl mx-auto">
         <Card>
-            <div className="text-center py-32">
+            <div className="text-center py-12 px-4 lg:py-32 lg:px-8">
               <h2 className="text-6xl font-extrabold tracking-tight text-gray-900 sm:text-8xl">
                 <span className="block">Are you ready</span>
                 <span className="block">
