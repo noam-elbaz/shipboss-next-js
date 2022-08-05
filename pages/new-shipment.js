@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "../components/Card";
 import CardActions from "../components/CardActions";
 import CardContent from "../components/CardContent";
@@ -11,10 +11,6 @@ import {
   DHLLogoNoBG,
   UPSLogoNoBG,
 } from "../components/CarrierLogos";
-
-const reset = () => {
-  console.log("reset");
-};
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -34,19 +30,128 @@ export default function NewShipment() {
   const [switchedAddresses, setSwitchedAddresses] = useState(false);
   const [fromAddress, setFromAddress] = useState(0);
   const [toAddress, setToAddress] = useState(0);
+  const [packageDetailInput, setPackageDetailInput] = useState({
+    id: null,
+    type: null,
+    quantity: null,
+    weight: null,
+    length: null,
+    width: null,
+    height: null,
+    addons: null,
+  });
+
+  const [packages, setPackages] = useState([
+    {
+      id: "A",
+      type: "Large Box",
+      quantity: 4,
+      weight: 6.4,
+      length: 12,
+      width: 6,
+      height: 6,
+      addons: null,
+    },
+    {
+      id: "B",
+      type: "Small Box",
+      quantity: 6,
+      weight: 2,
+      length: 4,
+      width: 8,
+      height: 3,
+      addons: "signature",
+    },
+  ]);
 
   const handleChange = (event) => {
     setBillDuty(event.target.value);
   };
 
+  function reset() {
+    setFromAddress(0);
+    setToAddress(0);
+  }
+
+  function switchAddresses() {
+    let tempTo = toAddress;
+    let tempFrom = fromAddress;
+
+    setFromAddress(tempTo);
+    setToAddress(tempFrom);
+  }
+  const addresses = [
+    {
+      id: 0,
+      name: "Select sender's address...",
+    },
+    {
+      id: 1,
+      name: "John Smith",
+      company: "Widgets Unlimited LLC",
+      address: {
+        street: "343 Maple Dr",
+        city: "Houston",
+        state: "TX",
+        zip: "92499",
+      },
+      contact: {
+        phone: "(310) 656-2838",
+        email: "jsmith@gmail.com",
+      },
+      isResidental: false,
+    },
+    {
+      id: 2,
+      name: "Rebecca O'Connor",
+      company: "Coca Cola Co.",
+      address: {
+        street: "87 4th Ave.",
+        city: "Dallas",
+        state: "TX",
+        zip: "83483",
+      },
+      contact: {
+        phone: "(560) 333-3848",
+        email: "roconnor@cocacola.com",
+      },
+      isResidental: false,
+    },
+  ];
+
+  const testPackageDetail = {
+    id: "C",
+    type: "Envelope",
+    quantity: 12,
+    weight: 4,
+    length: 1,
+    width: 4,
+    height: 5,
+    addons: "dry ice",
+  };
+
+  function addPackage() {
+    setPackages([...packages, testPackageDetail]);
+    console.log(packages);
+  }
   return (
     <>
       <div className="max-w-7xl mx-auto flex flex-col space-y-6 pb-32">
         <Card>
           <CardTitle title="New Shipment">
             <div className="flex space-x-4">
-              <Button label="Switch Address" />
-              <Button label="Reset Order Form" />
+              <button
+                onClick={switchAddresses}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Switch Addresses
+              </button>
+              <button
+                onClick={reset}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Reset Order Form
+              </button>
             </div>
           </CardTitle>
 
@@ -63,12 +168,11 @@ export default function NewShipment() {
                   onChange={(event) => setFromAddress(event.target.value)}
                   value={fromAddress}
                 >
-                  <option value={0}>Select sender address...</option>
-                  <option value={1}>Allie Abramson</option>
-                  <option value={2}>Bobby Brickman</option>
-                  <option value={3}>Cory Cohen</option>
-                  <option value={4}>David Dreyer</option>
-                  <option value={5}>Eddie Evans</option>
+                  {addresses.map((address) => (
+                    <option value={address.id} key={address.id}>
+                      {address.name}
+                    </option>
+                  ))}
                 </select>
                 <Button label="Edit" />
               </div>
@@ -79,7 +183,7 @@ export default function NewShipment() {
               ) : null}
               {fromAddress != 0 ? (
                 <div className="p-12 bg-gray-50 grid place-content-center text-gray-400 rounded-lg">
-                  Address selected: {`${fromAddress}`}
+                  Address selected: {addresses[fromAddress].name}
                 </div>
               ) : null}
             </div>
@@ -87,7 +191,7 @@ export default function NewShipment() {
             {/* TO - RIGHT */}
             <div className="p-6">
               <div className="flex w-full place-items-center space-x-4 pb-6">
-                <span className="font-semibold">To</span>
+                <span className="font-semibold">From</span>
                 <select
                   className={classNames(
                     "text-ellipsis w-full block py-2 border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md",
@@ -96,12 +200,11 @@ export default function NewShipment() {
                   onChange={(event) => setToAddress(event.target.value)}
                   value={toAddress}
                 >
-                  <option value={0}>Select sender address...</option>
-                  <option value={1}>Allie Abramson</option>
-                  <option value={2}>Bobby Brickman</option>
-                  <option value={3}>Cory Cohen</option>
-                  <option value={4}>David Dreyer</option>
-                  <option value={5}>Eddie Evans</option>
+                  {addresses.map((address) => (
+                    <option value={address.id} key={address.id}>
+                      {address.name}
+                    </option>
+                  ))}
                 </select>
                 <Button label="Edit" />
               </div>
@@ -111,8 +214,8 @@ export default function NewShipment() {
                 </div>
               ) : null}
               {toAddress != 0 ? (
-                <div className="p-12 bg-gray-50 grid place-content-center text-gray-400 rounded-lg">
-                  Address selected: {`${toAddress}`}
+                <div className="p-12 bg-gray-50 grid place-content-center text-gray-400 rounded-lg ">
+                  Address selected: {addresses[toAddress].name}
                 </div>
               ) : null}
             </div>
@@ -234,7 +337,7 @@ export default function NewShipment() {
                 </div>
               </div>
               <button
-                type="button"
+                onClick={addPackage}
                 className="h-10 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
                 Add Package
@@ -242,7 +345,7 @@ export default function NewShipment() {
             </div>
           </CardActions>
 
-          {!packageCount && (
+          {packages.length === 0 && (
             <CardContent>
               <div className="bg-red-100/50 w-full h-24 p-4 rounded-lg grid place-content-center border border-red-500 border-dashed">
                 <div className="flex space-y-2 place-items-center">
@@ -254,70 +357,80 @@ export default function NewShipment() {
             </CardContent>
           )}
 
-          {packageCount > 0 && (
+          {packages.length > 0 && (
             <CardContent>
               <div className="space-y-4">
-                <div className="group flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
-                  <div className="flex space-x-2 items-center">
-                    <div className="px-4 py-4 bg-red-500 text-white flex text-center items-center rounded group-hover:bg-red-600">
-                      A
-                    </div>
-                    <div className="pl-4">
-                      <div className="text-xs font-medium text-gray-600">
-                        Quantity
+                {/* PACKAGE A START THE LOOP*/}
+                {packages.map((packageItem, index) => (
+                  <div
+                    key={index}
+                    className="group flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow"
+                  >
+                    <div className="flex space-x-2 items-center">
+                      <div className="px-4 py-4 bg-red-500 text-white flex text-center items-center rounded group-hover:bg-red-600">
+                        {index + 1}
                       </div>
-                      <div className="text-ellipsis w-20 mt-1 block py-2 text-base">
-                        4<span className="text-gray-400 pl-2">x</span>
+                      <div className="pl-4">
+                        <div className="text-xs font-medium text-gray-600">
+                          Quantity
+                        </div>
+                        <div className="text-ellipsis w-20 mt-1 block py-2 text-base">
+                          {packageItem.quantity}
+                          <span className="text-gray-400 pl-2">x</span>
+                        </div>
                       </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Package Type
+                      <div>
+                        <div className="text-xs font-medium text-gray-600">
+                          Package Type
+                        </div>
+                        <div className="text-ellipsis w-32 py-2 text-base">
+                          {packageItem.type}
+                        </div>
                       </div>
-                      <div className="text-ellipsis w-32 py-2 text-base">
-                        Large Box
+
+                      <div>
+                        <div className="text-xs font-medium text-gray-600">
+                          Weight
+                        </div>
+                        <div className="text-ellipsis w-28 mt-1 block py-2 text-base">
+                          {packageItem.weight} lbs
+                          <span className="text-gray-400">/pkg</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-gray-600">
+                          Dimensions{" "}
+                          <span className="text-gray-400"> (inches)</span>
+                        </div>
+                        <div className="w-36 mt-1 block py-2 text-base space-x-2">
+                          <span>{packageItem.length}</span>
+                          <span className="text-gray-400">x</span>
+                          <span>{packageItem.width}</span>
+                          <span className="text-gray-400">x</span>
+                          <span>{packageItem.height}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium text-gray-600">
+                          Add-on Options
+                        </div>
+                        <div className="text-ellipsis mt-1 block py-2 text-base capitalize">
+                          {packageItem.addons === null && "No add-ons"}
+                          {packageItem.addons !== null && packageItem.addons}
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Weight
-                      </div>
-                      <div className="text-ellipsis w-28 mt-1 block py-2 text-base">
-                        22 lbs. <span className="text-gray-400">/pkg</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Dimensions{" "}
-                        <span className="text-gray-400"> (inches)</span>
-                      </div>
-                      <div className="w-36 mt-1 block py-2 text-base space-x-2">
-                        <span>12</span>
-                        <span className="text-gray-400">x</span>
-                        <span>26</span>
-                        <span className="text-gray-400">x</span>
-                        <span>10</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Add-on Options
-                      </div>
-                      <div className="text-ellipsis mt-1 block py-2 text-base">
-                        No add-ons
-                      </div>
+                    <div className="flex space-x-2 items-center">
+                      <Button label="Edit" />
+                      <Button label="Delete" />
                     </div>
                   </div>
-                  <div className="flex space-x-2 items-center">
-                    <Button label="Edit" />
-                    <Button label="Delete" />
-                  </div>
-                </div>
+                ))}
 
                 <div className="flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
                   <div className="flex space-x-2 items-center">
-                    <div className="px-4 py-4 bg-red-500 text-white flex text-center items-center rounded">
+                    <div className="px-4 py-4 bg-orange-500 text-white flex text-center items-center rounded">
                       B
                     </div>
                     <div className="pl-4">
@@ -392,7 +505,7 @@ export default function NewShipment() {
 
                 <div className="flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
                   <div className="flex space-x-2 items-center">
-                    <div className="px-4 py-4 bg-red-500 text-white flex text-center items-center rounded">
+                    <div className="px-4 py-4 bg-orange-500 text-white flex text-center items-center rounded">
                       C
                     </div>
                     <div className="pl-4">
@@ -609,7 +722,10 @@ export default function NewShipment() {
         <Card>
           <CardTitle title="Service Plans">
             <div className="space-x-4">
-              <span className="text-left text-gray-400 italic">(would be nice to have a big empty state to remind user to  select from / to) Selected Plan: #{selectedPlan}</span>
+              <span className="text-left text-gray-400 italic">
+                (would be nice to have a big empty state to remind user to
+                select from / to) Selected Plan: #{selectedPlan}
+              </span>
               <Button label="Show All Plans" />
             </div>
           </CardTitle>
