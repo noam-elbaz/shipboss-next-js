@@ -33,36 +33,15 @@ export default function NewShipment() {
   const [packageDetailInput, setPackageDetailInput] = useState({
     id: null,
     type: null,
-    quantity: null,
-    weight: null,
-    length: null,
-    width: null,
-    height: null,
+    quantity: 0,
+    weight: 0,
+    length: 0,
+    width: 0,
+    height: 0,
     addons: null,
   });
 
-  const [packages, setPackages] = useState([
-    {
-      id: "A",
-      type: "Large Box",
-      quantity: 4,
-      weight: 6.4,
-      length: 12,
-      width: 6,
-      height: 6,
-      addons: null,
-    },
-    {
-      id: "B",
-      type: "Small Box",
-      quantity: 6,
-      weight: 2,
-      length: 4,
-      width: 8,
-      height: 3,
-      addons: "signature",
-    },
-  ]);
+  const [packages, setPackages] = useState([]);
 
   const handleChange = (event) => {
     setBillDuty(event.target.value);
@@ -80,10 +59,11 @@ export default function NewShipment() {
     setFromAddress(tempTo);
     setToAddress(tempFrom);
   }
+
   const addresses = [
     {
       id: 0,
-      name: "Select sender's address...",
+      name: "Select address...",
     },
     {
       id: 1,
@@ -117,26 +97,123 @@ export default function NewShipment() {
       },
       isResidental: false,
     },
+    {
+      id: 3,
+      name: "Jacque Rouel",
+      company: null,
+      address: {
+        street: "87 4th Ave.",
+        city: "Paris",
+        country: "France",
+        zip: "46373",
+      },
+      contact: {
+        phone: "+93 (23) 33-3842",
+        email: "jaqueroel@gmail.com",
+      },
+      isResidental: true,
+    },
   ];
 
-  const testPackageDetail = {
-    id: "C",
-    type: "Envelope",
-    quantity: 12,
-    weight: 4,
-    length: 1,
-    width: 4,
-    height: 5,
-    addons: "dry ice",
+  const resetPackageDetail = {
+    id: null,
+    type: null,
+    quantity: null,
+    weight: null,
+    length: null,
+    width: null,
+    height: null,
+    addons: null,
   };
 
   function addPackage() {
-    setPackages([...packages, testPackageDetail]);
-    console.log(packages);
+    if (packageDetailInput.weight != 0 && packageDetailInput.quantity != 0) {
+      setPackages([...packages, packageDetailInput]);
+      resetPackageDetailInput();
+    }
   }
+
+  const handleWeightInput = (event) => {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      weight: event.target.value,
+    });
+  };
+
+  const handleWidthInput = (event) => {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      width: event.target.value,
+    });
+  };
+
+  const handleHeightInput = (event) => {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      height: event.target.value,
+    });
+  };
+
+  const handleLengthInput = (event) => {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      length: event.target.value,
+    });
+  };
+
+  const handleQuantityInput = (event) => {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      quantity: event.target.value,
+    });
+  };
+
+  const handleTypeInput = (event) => {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      type: event.target.value,
+    });
+  };
+
+  const handlePrefillDimensions = (event) => {
+    if (event.target.value === "standard") {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        length: 12,
+        width: 8,
+        height: 10,
+      });
+    } else if (event.target.value === "oversized") {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        length: 24,
+        width: 16,
+        height: 20,
+      });
+    } else {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        length: 0,
+        width: 0,
+        height: 0,
+      });
+    }
+  };
+
+  function resetPackageDetailInput() {
+    setPackageDetailInput({
+      ...packageDetailInput,
+      quantity: 0,
+      weight: 0,
+      length: 0,
+      width: 0,
+      height: 0,
+    });
+  }
+
   return (
     <>
-      <div className="max-w-7xl mx-auto flex flex-col space-y-6 pb-32">
+      <div className="max-w-7xl mx-auto flex flex-col space-y-4 sm:space-y-6 pb-32">
         <Card>
           <CardTitle title="New Shipment">
             <div className="flex space-x-4">
@@ -155,7 +232,7 @@ export default function NewShipment() {
             </div>
           </CardTitle>
 
-          <div className="grid grid-cols-2 w-full divide-x">
+          <div className="grid grid-cols-1 sm:grid-cols-2 w-full divide-y sm:divide-x sm:divide-y-0">
             {/* FROM - LEFT */}
             <div className="p-6">
               <div className="flex w-full place-items-center space-x-4 pb-6">
@@ -176,11 +253,13 @@ export default function NewShipment() {
                 </select>
                 <Button label="Edit" />
               </div>
+
               {fromAddress == 0 ? (
                 <div className="p-12 bg-red-50 grid place-content-center text-red-400 rounded-lg">
                   Select a sender address...
                 </div>
               ) : null}
+
               {fromAddress != 0 ? (
                 <div className="p-12 bg-gray-50 grid place-content-center text-gray-400 rounded-lg">
                   Address selected: {addresses[fromAddress].name}
@@ -224,19 +303,25 @@ export default function NewShipment() {
 
         <Card>
           <CardTitle title="Package Details">
-            {packageCount === 0 && <span>No packages added</span>}
-            {packageCount === 1 && <span>1 package added</span>}
-            {packageCount > 1 && <span>{packageCount} packages added</span>}
+            {packages === 0 && <span>No packages added</span>}
+            {packages.length === 1 && <span>1 package added</span>}
+            {packages.length > 1 && (
+              <span>{packages.length} packages added</span>
+            )}
           </CardTitle>
 
           <CardActions>
             <div className="w-full flex items-end justify-between">
-              <div className="flex flex-row gap-x-4">
-                <div>
+              <div className="flex flex-row space-x-2">
+                <div className="">
                   <label className="text-xs pb-2 font-medium text-gray-700">
                     Package Type
                   </label>
-                  <select className="text-ellipsis w-32 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
+                  <select
+                    value={packageDetailInput.type}
+                    onChange={handleTypeInput}
+                    className="text-ellipsis w-48 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md"
+                  >
                     <option>Custom Package</option>
                     <option>Large Box</option>
                     <option>Medium Box</option>
@@ -244,6 +329,7 @@ export default function NewShipment() {
                     <option>Envelope</option>
                   </select>
                 </div>
+
                 <div>
                   <label className="text-xs pb-2 font-medium text-gray-700">
                     Quantity
@@ -253,6 +339,8 @@ export default function NewShipment() {
                       <span className="text-gray-500 sm:text-sm">#</span>
                     </div>
                     <input
+                      value={packageDetailInput.quantity}
+                      onChange={handleQuantityInput}
                       placeholder="0"
                       type="number"
                       className="pl-7 block w-32 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
@@ -267,6 +355,8 @@ export default function NewShipment() {
                   <div className="mt-1">
                     <input
                       placeholder="0 lbs."
+                      value={packageDetailInput.weight}
+                      onChange={handleWeightInput}
                       type="number"
                       className="w-32  shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
                     />
@@ -277,10 +367,13 @@ export default function NewShipment() {
                   <label className="text-xs pb-2 font-medium text-gray-700">
                     Prefill Dimensions
                   </label>
-                  <select className="text-ellipsis w-32 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
+                  <select
+                    onChange={handlePrefillDimensions}
+                    className="text-ellipsis w-48 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md"
+                  >
                     <option>Choose...</option>
-                    <option>Standard 12 x 8 x 10</option>
-                    <option>Oversized 24 x 16 x 20</option>
+                    <option value={"standard"}>Standard 12 x 8 x 10</option>
+                    <option value={"oversized"}>Oversized 24 x 16 x 20</option>
                   </select>
                 </div>
 
@@ -291,18 +384,23 @@ export default function NewShipment() {
                     </label>
                     <div className="mt-1">
                       <input
+                        value={packageDetailInput.length}
+                        onChange={handleLengthInput}
                         placeholder="0 in."
                         type="number"
                         className="w-24  shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative rounded-l-md focus:z-10"
                       />
                     </div>
                   </div>
+
                   <div>
                     <label className="  text-xs pb-2 font-medium text-gray-700">
                       Width (in.)
                     </label>
                     <div className="mt-1">
                       <input
+                        value={packageDetailInput.width}
+                        onChange={handleWidthInput}
                         placeholder="0 in."
                         type="number"
                         className="w-24  shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
@@ -316,6 +414,8 @@ export default function NewShipment() {
                     <div className="mt-1">
                       <input
                         type="number"
+                        value={packageDetailInput.height}
+                        onChange={handleHeightInput}
                         placeholder="0 in."
                         className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative rounded-r-md focus:z-10"
                       />
@@ -336,9 +436,16 @@ export default function NewShipment() {
                   </select>
                 </div>
               </div>
+
               <button
                 onClick={addPackage}
-                className="h-10 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                className={classNames(
+                  "inline-flex shrink-0 items-center px-4 py-2 text-sm border border-transparent font-medium rounded-md shadow-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                  packageDetailInput.weight == 0 ||
+                    packageDetailInput.quantity == 0
+                    ? "bg-gray-300"
+                    : "bg-red-500"
+                )}
               >
                 Add Package
               </button>
@@ -347,10 +454,10 @@ export default function NewShipment() {
 
           {packages.length === 0 && (
             <CardContent>
-              <div className="bg-red-100/50 w-full h-24 p-4 rounded-lg grid place-content-center border border-red-500 border-dashed">
+              <div className="bg-red-100/50 w-full h-24 p-4 rounded-lg grid place-content-center">
                 <div className="flex space-y-2 place-items-center">
                   <div className="my-auto text-red-500">
-                    You packages will be added here
+                    Your packages will be added here
                   </div>
                 </div>
               </div>
@@ -428,144 +535,148 @@ export default function NewShipment() {
                   </div>
                 ))}
 
-                <div className="flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
-                  <div className="flex space-x-2 items-center">
-                    <div className="px-4 py-4 bg-orange-500 text-white flex text-center items-center rounded">
-                      B
-                    </div>
-                    <div className="pl-4">
-                      <div className="text-xs font-medium text-gray-600">
-                        Quantity
+                {false && (
+                  <>
+                    <div className="flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
+                      <div className="flex space-x-2 items-center">
+                        <div className="px-4 py-4 bg-orange-500 text-white flex text-center items-center rounded">
+                          B
+                        </div>
+                        <div className="pl-4">
+                          <div className="text-xs font-medium text-gray-600">
+                            Quantity
+                          </div>
+                          <div className="w-20 mt-1 block py-2 text-base">
+                            6<span className="text-gray-400 pl-2">x</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Package Type
+                          </div>
+                          <div className="w-32 py-2 text-base">Small Box</div>
+                        </div>
+
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Weight
+                          </div>
+                          <div className="w-28 mt-1 block py-2 text-base">
+                            6 lbs. <span className="text-gray-400">/pkg</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Dimensions{" "}
+                            <span className="text-gray-400"> (inches)</span>
+                          </div>
+                          <div className="w-36 mt-1 block py-2 text-base space-x-2">
+                            <span>6</span>
+                            <span className="text-gray-400">x</span>
+                            <span>8</span>
+                            <span className="text-gray-400">x</span>
+                            <span>12</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Insurance
+                          </div>
+                          <div className="w-32 mt-1 block py-2 text-base">
+                            $25.00 /pkg
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Dry Ice
+                          </div>
+                          <div className="w-40 mt-1 block py-2 text-base">
+                            2 lbs. / pkg
+                            <span className="pl-2 text-gray-400 text-sm">
+                              (Medical)
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Signature
+                          </div>
+                          <div className="w-40 mt-1 block py-2 text-base">
+                            Required
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-20 mt-1 block py-2 text-base">
-                        6<span className="text-gray-400 pl-2">x</span>
+                      <div className="flex space-x-2 items-center">
+                        <Button label="Edit" />
+                        <Button label="Delete" />
                       </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Package Type
-                      </div>
-                      <div className="w-32 py-2 text-base">Small Box</div>
                     </div>
 
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Weight
-                      </div>
-                      <div className="w-28 mt-1 block py-2 text-base">
-                        6 lbs. <span className="text-gray-400">/pkg</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Dimensions{" "}
-                        <span className="text-gray-400"> (inches)</span>
-                      </div>
-                      <div className="w-36 mt-1 block py-2 text-base space-x-2">
-                        <span>6</span>
-                        <span className="text-gray-400">x</span>
-                        <span>8</span>
-                        <span className="text-gray-400">x</span>
-                        <span>12</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Insurance
-                      </div>
-                      <div className="w-32 mt-1 block py-2 text-base">
-                        $25.00 /pkg
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Dry Ice
-                      </div>
-                      <div className="w-40 mt-1 block py-2 text-base">
-                        2 lbs. / pkg
-                        <span className="pl-2 text-gray-400 text-sm">
-                          (Medical)
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Signature
-                      </div>
-                      <div className="w-40 mt-1 block py-2 text-base">
-                        Required
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2 items-center">
-                    <Button label="Edit" />
-                    <Button label="Delete" />
-                  </div>
-                </div>
+                    <div className="flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
+                      <div className="flex space-x-2 items-center">
+                        <div className="px-4 py-4 bg-orange-500 text-white flex text-center items-center rounded">
+                          C
+                        </div>
+                        <div className="pl-4">
+                          <div className="text-xs font-medium text-gray-600">
+                            Quantity
+                          </div>
+                          <div className="w-20 mt-1 block py-2 text-base">
+                            6<span className="text-gray-400 pl-2">x</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Package Type
+                          </div>
+                          <div className="w-32 py-2 text-base">Pak</div>
+                        </div>
 
-                <div className="flex justify-between p-4 border rounded-lg border-gray-300 items-center hover:shadow">
-                  <div className="flex space-x-2 items-center">
-                    <div className="px-4 py-4 bg-orange-500 text-white flex text-center items-center rounded">
-                      C
-                    </div>
-                    <div className="pl-4">
-                      <div className="text-xs font-medium text-gray-600">
-                        Quantity
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Weight
+                          </div>
+                          <div className="w-28 mt-1 block py-2 text-base">
+                            2 lbs. <span className="text-gray-400">/pkg</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Dimensions{" "}
+                            <span className="text-gray-400"> (inches)</span>
+                          </div>
+                          <div className="w-36 mt-1 block py-2 text-base space-x-2">
+                            <span>4</span>
+                            <span className="text-gray-400">x</span>
+                            <span>2</span>
+                            <span className="text-gray-400">x</span>
+                            <span>6</span>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Reference #1
+                          </div>
+                          <div className="w-32 mt-1 block py-2 text-base">
+                            John Edwards
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs font-medium text-gray-600">
+                            Reference #2
+                          </div>
+                          <div className="w-40 mt-1 block py-2 text-base">
+                            Amanda Smith
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-20 mt-1 block py-2 text-base">
-                        6<span className="text-gray-400 pl-2">x</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Package Type
-                      </div>
-                      <div className="w-32 py-2 text-base">Pak</div>
-                    </div>
-
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Weight
-                      </div>
-                      <div className="w-28 mt-1 block py-2 text-base">
-                        2 lbs. <span className="text-gray-400">/pkg</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Dimensions{" "}
-                        <span className="text-gray-400"> (inches)</span>
-                      </div>
-                      <div className="w-36 mt-1 block py-2 text-base space-x-2">
-                        <span>4</span>
-                        <span className="text-gray-400">x</span>
-                        <span>2</span>
-                        <span className="text-gray-400">x</span>
-                        <span>6</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Reference #1
-                      </div>
-                      <div className="w-32 mt-1 block py-2 text-base">
-                        John Edwards
+                      <div className="flex space-x-2 items-center">
+                        <Button label="Edit" />
+                        <Button label="Delete" />
                       </div>
                     </div>
-                    <div>
-                      <div className="text-xs font-medium text-gray-600">
-                        Reference #2
-                      </div>
-                      <div className="w-40 mt-1 block py-2 text-base">
-                        Amanda Smith
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2 items-center">
-                    <Button label="Edit" />
-                    <Button label="Delete" />
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
             </CardContent>
           )}
@@ -721,26 +832,21 @@ export default function NewShipment() {
 
         <Card>
           <CardTitle title="Service Plans">
-            <div className="space-x-4">
-              <span className="text-left text-gray-400 italic">
-                (would be nice to have a big empty state to remind user to
-                select from / to) Selected Plan: #{selectedPlan}
-              </span>
-              <Button label="Show All Plans" />
-            </div>
+            <Button label="Show All Plans" />
           </CardTitle>
           <CardContent>
-            {packageCount === 0 && (
-              <div className="bg-red-100/50 w-full h-24 p-4 rounded-lg grid place-content-center border border-red-500 border-dashed">
+            {packages.length == 0 && (
+              <div className="bg-red-100/50 w-full h-48 p-4 rounded-lg grid place-content-center">
                 <div className="flex space-y-2 place-items-center">
-                  <div className="my-auto text-red-500">
-                    You must add atleast one package to see rates
+                  <div className="my-auto text-red-500 text-center">
+                    You must choose sender and receiver addresses and add
+                    atleast one package to see rates
                   </div>
                 </div>
               </div>
             )}
 
-            {packageCount !== 0 && (
+            {packages.length > 0 && (
               <div className="space-y-12 lg:space-y-0 lg:grid lg:grid-cols-4 lg:gap-x-8">
                 {/* Plan Choice #1 */}
                 <div
@@ -862,7 +968,9 @@ export default function NewShipment() {
 
         <Card>
           <CardTitle title="International Customs Info">
-            International shipping requires a commercial invoice
+            <span className="hidden sm:block text-right p-4 bg-red-100">
+              International shipping requires a commercial invoice
+            </span>
           </CardTitle>
           <CardContent>
             <div className="space-x-4 flex items-center">
@@ -1051,6 +1159,7 @@ export default function NewShipment() {
                 </div>
               </div>
             )}
+
             {makeCommercialInvoice && (
               <div>
                 <div className="w-full flex justify-between items-end pt-8">
@@ -1229,12 +1338,6 @@ export default function NewShipment() {
         <Card>
           <CardTitle title="Confirm & Print Label">
             <div className="flex space-x-4 place-items-center">
-              {pickupRequired && (
-                <div className="rounded-md bg-red-50 px-4 py-2 text-md text-red-700">
-                  You will be prompted to enter a pickup date and time after
-                  clicking confirm and print.
-                </div>
-              )}
               <div className="font-base text-gray-800 text-right">
                 This shipment requires pickup
               </div>
@@ -1256,6 +1359,12 @@ export default function NewShipment() {
             </div>
           </CardTitle>
           <CardContent>
+            {pickupRequired && (
+              <div className="rounded-md bg-red-50 px-4 py-2 text-md text-red-700">
+                You will be prompted to enter a pickup date and time after
+                clicking confirm and print.
+              </div>
+            )}
             <div className="flex justify-between items-center">
               <div className="space-x-4 flex items-center">
                 <span>Label Type</span>

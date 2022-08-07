@@ -1,6 +1,7 @@
 import React from "react";
 import { useSession, getSession } from "next-auth/react";
 import Card from "../components/Card";
+import CardContent from "../components/CardContent";
 
 export default function Account() {
   const { data: session, status } = useSession();
@@ -8,7 +9,9 @@ export default function Account() {
   if (status === "authenticated") {
     return (
       <Card>
-        <div>Welcome {session.user.email}</div>
+        <CardContent>
+          <div>Welcome {session.user.email}</div>
+        </CardContent>
       </Card>
     );
   } else {

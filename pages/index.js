@@ -1,7 +1,7 @@
 import Card from "../components/Card";
 import Link from "next/link";
 
-export default function Page() {
+export default function Home() {
   return (
     <>
       <div className="max-w-7xl mx-auto">
