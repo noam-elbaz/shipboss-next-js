@@ -4,11 +4,9 @@ import Card from "../components/Card";
 import CardTitle from "../components/CardTitle";
 import CardContent from "../components/CardContent";
 import JSONPretty from "react-json-pretty";
-import "react-json-pretty/themes/adventure_time.css";
 
 export default function Login() {
   const { data: session } = useSession();
-  var JSONPrettyMon = require("react-json-pretty/dist/adventure_time");
   if (session) {
     return (
       <Card>
@@ -21,11 +19,7 @@ export default function Login() {
           </button>
         </CardTitle>
         <CardContent>
-          <JSONPretty
-            id="json-pretty"
-            theme={JSONPrettyMon}
-            data={session}
-          ></JSONPretty>
+          <JSONPretty id="json-pretty" data={session}></JSONPretty>
         </CardContent>
       </Card>
     );

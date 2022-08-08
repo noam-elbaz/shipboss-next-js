@@ -1,11 +1,19 @@
 import Card from "../components/Card";
 import CardContent from "../components/CardContent";
 import CardTitle from "../components/CardTitle";
+import supabase from "../utils/supabase";
+import JSONPretty from "react-json-pretty";
 
-export function getStaticProps() {
+export async function getStaticProps() {
+  const { data: orders, error } = await supabase.from("orders").select("*");
+
+  if (error) {
+    throw new Error(error);
+  }
+
   return {
     props: {
-      orders: [],
+      orders,
     },
   };
 }
@@ -17,7 +25,9 @@ export default function Blog({ orders }) {
         <Card>
           <CardTitle title="Blog" />
 
-          <CardContent>{JSON.stringify(orders, null, 2)}</CardContent>
+          <CardContent>
+            <JSONPretty id="json-pretty" data={orders}></JSONPretty>
+          </CardContent>
         </Card>
       </div>
     </>
