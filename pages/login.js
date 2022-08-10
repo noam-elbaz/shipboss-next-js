@@ -1,4 +1,4 @@
-import supabase from "../utils/supabase";
+import { supabase } from "../utils/supabase";
 
 export default function Login() {
   async function handleSubmit(event) {
@@ -6,7 +6,7 @@ export default function Login() {
 
     const email = event.target.email.value;
 
-    await supbase.auth.signIn({ email });
+    await supabase.auth.signIn({ email });
   }
 
   return (
