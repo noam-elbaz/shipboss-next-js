@@ -1,4 +1,4 @@
-import supbase from "../utils/supabase";
+import supabase from "../utils/supabase";
 
 export default function Login() {
   async function handleSubmit(event) {
