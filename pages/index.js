@@ -1,6 +1,6 @@
 import Card from "../components/Card";
 import Link from "next/link";
-
+import { supabase } from "../utils/supabase";
 
 export default function Home() {
   return (
