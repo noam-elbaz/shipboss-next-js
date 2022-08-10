@@ -1,6 +1,7 @@
 import Card from "../components/Card";
 import Link from "next/link";
 
+
 export default function Home() {
   return (
     <>
@@ -29,8 +30,7 @@ export default function Home() {
               <div className="ml-3 inline-flex">
                 <a
                   href="#"
-                  className="inline-flex items-center justify-center px-7 py-3 border border-transparent text-xl font-base rounded-md text-red-700 bg-red-100 hover:bg-red-200"
-                >
+                  className="inline-flex items-center justify-center px-7 py-3 border border-transparent text-xl font-base rounded-md text-red-700 bg-red-100 hover:bg-red-200">
                   Learn more
                 </a>
               </div>

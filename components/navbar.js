@@ -88,7 +88,6 @@ export default function Navbar() {
                     </Menu.Items>
                   </Transition>
                 </Menu>
-
                 {/* Profile dropdown */}
                 <Menu as="div" className="ml-3 relative">
                   <div>

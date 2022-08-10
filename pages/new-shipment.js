@@ -17,9 +17,7 @@ function classNames(...classes) {
 }
 
 export default function NewShipment() {
-  const [packageCount, setPackageCount] = useState(1);
   const [billDuty, setBillDuty] = useState("receiver");
-
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [pickupRequired, setPickupRequired] = useState(false);
   const [makeCommercialInvoice, setMakeCommercialInvoice] = useState(false);
@@ -38,7 +36,13 @@ export default function NewShipment() {
     length: 0,
     width: 0,
     height: 0,
-    addons: null,
+    addons: [
+      { key: "choose", title: "Choose...", active: false },
+      { key: "signature", title: "Signature", active: false },
+      { key: "dry-ice", title: "Dry Ice", active: false },
+      { key: "reference", title: "Reference", active: false },
+      { key: "insurance", title: "Insurance", active: false },
+    ],
   });
 
   const [packages, setPackages] = useState([]);
@@ -115,17 +119,6 @@ export default function NewShipment() {
     },
   ];
 
-  const resetPackageDetail = {
-    id: null,
-    type: null,
-    quantity: null,
-    weight: null,
-    length: null,
-    width: null,
-    height: null,
-    addons: null,
-  };
-
   function addPackage() {
     if (packageDetailInput.weight != 0 && packageDetailInput.quantity != 0) {
       setPackages([...packages, packageDetailInput]);
@@ -134,38 +127,48 @@ export default function NewShipment() {
   }
 
   const handleWeightInput = (event) => {
-    setPackageDetailInput({
-      ...packageDetailInput,
-      weight: event.target.value,
-    });
+    if (event.target.value >= 0) {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        weight: event.target.value,
+      });
+    }
   };
 
   const handleWidthInput = (event) => {
-    setPackageDetailInput({
-      ...packageDetailInput,
-      width: event.target.value,
-    });
+    if (event.target.value >= 0) {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        width: event.target.value,
+      });
+    }
   };
 
   const handleHeightInput = (event) => {
-    setPackageDetailInput({
-      ...packageDetailInput,
-      height: event.target.value,
-    });
+    if (event.target.value >= 0) {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        height: event.target.value,
+      });
+    }
   };
 
   const handleLengthInput = (event) => {
-    setPackageDetailInput({
-      ...packageDetailInput,
-      length: event.target.value,
-    });
+    if (event.target.value >= 0) {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        length: event.target.value,
+      });
+    }
   };
 
   const handleQuantityInput = (event) => {
-    setPackageDetailInput({
-      ...packageDetailInput,
-      quantity: event.target.value,
-    });
+    if (event.target.value >= 0) {
+      setPackageDetailInput({
+        ...packageDetailInput,
+        quantity: event.target.value,
+      });
+    }
   };
 
   const handleTypeInput = (event) => {
@@ -200,6 +203,37 @@ export default function NewShipment() {
     }
   };
 
+  const handleAddonRemoval = (event) => {
+    let tempArray = [];
+
+    packageDetailInput.addons.map((addon, index) => {
+      if (index === event) {
+        let tempItem = packageDetailInput.addons[event];
+        tempItem.active = false;
+      }
+      tempArray.push(addon);
+    });
+
+    setPackageDetailInput({ ...packageDetailInput, addons: tempArray });
+  };
+
+  const handleAddonSelection = (event) => {
+    let tempArray = [];
+    let tempIndex = packageDetailInput.addons.findIndex(
+      (addon) => addon.title === event.target.value
+    );
+
+    packageDetailInput.addons.map((addon, index) => {
+      if (index === tempIndex) {
+        let tempItem = packageDetailInput.addons[tempIndex];
+        tempItem.active = true;
+      }
+      tempArray.push(addon);
+    });
+
+    setPackageDetailInput({ ...packageDetailInput, addons: tempArray });
+  };
+
   function resetPackageDetailInput() {
     setPackageDetailInput({
       ...packageDetailInput,
@@ -216,18 +250,20 @@ export default function NewShipment() {
       <div className="max-w-7xl mx-auto flex flex-col space-y-4 sm:space-y-6 pb-32">
         <Card>
           <CardTitle title="New Shipment">
-            <div className="flex space-x-4">
+            <div className="flex place-items-center space-x-2 sm:space-x-4">
               <button
                 onClick={switchAddresses}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                className="items-center px-2 py-1 sm:px-4 sm:py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                Switch Addresses
+                <span>Switch</span>
+                <span className="hidden sm:inline">&nbsp;Addresses</span>
               </button>
               <button
                 onClick={reset}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                className="inline-flex items-center px-2 py-1 sm:px-4 sm:py-2  border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                Reset Order Form
+                <span>Reset</span>
+                <span className="hidden sm:inline">&nbsp;Order Form</span>
               </button>
             </div>
           </CardTitle>
@@ -270,7 +306,7 @@ export default function NewShipment() {
             {/* TO - RIGHT */}
             <div className="p-6">
               <div className="flex w-full place-items-center space-x-4 pb-6">
-                <span className="font-semibold">From</span>
+                <span className="font-semibold">To</span>
                 <select
                   className={classNames(
                     "text-ellipsis w-full block py-2 border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md",
@@ -303,6 +339,14 @@ export default function NewShipment() {
 
         <Card>
           <CardTitle title="Package Details">
+            <span>
+              ACTIVE:
+              {
+                packageDetailInput.addons.filter(
+                  (addon) => addon.active === true
+                ).length
+              }
+            </span>
             {packages === 0 && <span>No packages added</span>}
             {packages.length === 1 && <span>1 package added</span>}
             {packages.length > 1 && (
@@ -311,140 +355,292 @@ export default function NewShipment() {
           </CardTitle>
 
           <CardActions>
-            <div className="w-full flex items-end justify-between">
-              <div className="flex flex-row space-x-2">
-                <div className="">
-                  <label className="text-xs pb-2 font-medium text-gray-700">
-                    Package Type
-                  </label>
-                  <select
-                    value={packageDetailInput.type}
-                    onChange={handleTypeInput}
-                    className="text-ellipsis w-48 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md"
-                  >
-                    <option>Custom Package</option>
-                    <option>Large Box</option>
-                    <option>Medium Box</option>
-                    <option>Small Box</option>
-                    <option>Envelope</option>
-                  </select>
+            <div className="flex flex-wrap gap-x-4 gap-y-6">
+              <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md pl-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                <label className="text-xs text-gray-900">Package Type</label>
+                <select
+                  value={packageDetailInput.type}
+                  onChange={handleTypeInput}
+                  className="p-0 pr-12 text-ellipsis text-base focus:border-none focus:outline-none rounded-lg border-0 border-transparent focus-within:ring-0"
+                >
+                  <option>Custom Package</option>
+                  <option>Large Box</option>
+                  <option>Medium Box</option>
+                  <option>Small Box</option>
+                  <option>Envelope</option>
+                </select>
+              </div>
+              <div className="relative flex flex-col gap-y-2 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                <label htmlFor="name" className="text-xs text-gray-900">
+                  Quantity
+                </label>
+                <div className="absolute bottom-2 left-0 pl-3 flex  pointer-events-none">
+                  <span className="text-gray-500 text-base ">#</span>
                 </div>
+                <input
+                  type="number"
+                  value={packageDetailInput.quantity}
+                  onChange={handleQuantityInput}
+                  className="w-24 pl-4 inline border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                  placeholder="0"
+                />
+              </div>
+              <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                <label htmlFor="name" className="text-xs text-gray-900">
+                  Pkg. Weight<span className="text-gray-500">&nbsp;lbs.</span>
+                </label>
+                <input
+                  value={packageDetailInput.weight}
+                  onChange={handleWeightInput}
+                  type="number"
+                  className="inline w-24 border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                  placeholder="0"
+                />
+              </div>
 
-                <div>
-                  <label className="text-xs pb-2 font-medium text-gray-700">
-                    Quantity
-                  </label>
-                  <div className="mt-1 relative ">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">#</span>
-                    </div>
-                    <input
-                      value={packageDetailInput.quantity}
-                      onChange={handleQuantityInput}
-                      placeholder="0"
-                      type="number"
-                      className="pl-7 block w-32 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs pb-2 font-medium text-gray-700">
-                    Pkg. Weight (LB)
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      placeholder="0 lbs."
-                      value={packageDetailInput.weight}
-                      onChange={handleWeightInput}
-                      type="number"
-                      className="w-32  shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs pb-2 font-medium text-gray-700">
+              <div className="flex -space-x-[1px]">
+                <div className="flex flex-col gap-y-2 border border-gray-300 rounded-l-md pl-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600 focus-within:z-10">
+                  <label className="text-xs text-gray-900">
                     Prefill Dimensions
                   </label>
                   <select
                     onChange={handlePrefillDimensions}
-                    className="text-ellipsis w-48 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md"
+                    className="w-40 p-0 pr-12 text-ellipsis text-base focus:border-none focus:outline-none rounded-lg border-0 border-transparent focus-within:ring-0"
                   >
                     <option>Choose...</option>
                     <option value={"standard"}>Standard 12 x 8 x 10</option>
                     <option value={"oversized"}>Oversized 24 x 16 x 20</option>
                   </select>
                 </div>
-
-                <div className="flex -space-x-px">
-                  <div>
-                    <label className="text-xs pb-2 font-medium text-gray-700">
-                      Length (in.)
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        value={packageDetailInput.length}
-                        onChange={handleLengthInput}
-                        placeholder="0 in."
-                        type="number"
-                        className="w-24  shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative rounded-l-md focus:z-10"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="  text-xs pb-2 font-medium text-gray-700">
-                      Width (in.)
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        value={packageDetailInput.width}
-                        onChange={handleWidthInput}
-                        placeholder="0 in."
-                        type="number"
-                        className="w-24  shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative focus:z-10"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="  text-xs pb-2 font-medium text-gray-700">
-                      Height (in.)
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="number"
-                        value={packageDetailInput.height}
-                        onChange={handleHeightInput}
-                        placeholder="0 in."
-                        className="w-24 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 relative rounded-r-md focus:z-10"
-                      />
-                    </div>
-                  </div>
+                <div className="flex flex-col gap-y-2 border border-gray-300  px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600 focus-within:z-10">
+                  <label htmlFor="name" className="text-xs text-gray-900">
+                    Length<span className="text-gray-500">&nbsp;in.</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={packageDetailInput.length}
+                    onChange={handleLengthInput}
+                    className="w-16 border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                    placeholder="0"
+                  />
                 </div>
 
-                <div>
-                  <label className="text-xs pb-2 font-medium text-gray-700">
-                    Add-on Options
+                <div className="flex flex-col gap-y-2 border border-gray-300 px-3 py-2  shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600 focus-within:z-10">
+                  <label htmlFor="name" className="text-xs text-gray-900">
+                    Width<span className="text-gray-500">&nbsp;in.</span>
                   </label>
-                  <select className="w-32 mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-md">
-                    <option>None</option>
-                    <option>Insurance</option>
-                    <option>Dry Ice</option>
-                    <option>Reference</option>
-                    <option>Signature</option>
-                  </select>
+                  <input
+                    type="number"
+                    value={packageDetailInput.width}
+                    onChange={handleWidthInput}
+                    className="w-16 flex-1 border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-y-2 border border-gray-300 rounded-r-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600 focus-within:z-10">
+                  <label htmlFor="name" className="text-xs text-gray-900">
+                    Height<span className="text-gray-500">&nbsp;in.</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={packageDetailInput.height}
+                    onChange={handleHeightInput}
+                    className="w-16 border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                    placeholder="0"
+                  />
                 </div>
               </div>
+
+              <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md pl-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                <label className="text-xs text-gray-900">Addon Options</label>
+                <select
+                  onChange={handleAddonSelection}
+                  value="yo"
+                  className="w-32 p-0 pr-10 text-ellipsis text-base focus:border-none focus:outline-none rounded-lg border-0 border-transparent focus-within:ring-0"
+                >
+                  {packageDetailInput.addons.map((addon, index) => (
+                    <option
+                      key={index}
+                      value={packageDetailInput.addons[index].value}
+                    >
+                      {packageDetailInput.addons[index].title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {packageDetailInput.addons[1].active === true && (
+                <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                  <label className="text-xs text-gray-900 flex justify-between">
+                    <div>Signature</div>
+                    <button
+                      onClick={() => handleAddonRemoval(1)}
+                      className="text-red-500 font-medium hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </label>
+                  <select className="p-0 pr-12 text-ellipsis text-base focus:border-none focus:outline-none rounded-lg border-0 border-transparent focus-within:ring-0">
+                    <option default>Choose...</option>
+                    <option>Signature 1</option>
+                    <option>Signature 2</option>
+                  </select>
+                </div>
+              )}
+              {packageDetailInput.addons[2].active === true && (
+                <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                  <label className="text-xs text-gray-900 flex justify-between">
+                    <div>
+                      Dry Ice<span className="text-gray-500">&nbsp;lbs</span>
+                    </div>
+                    <button
+                      onClick={() => handleAddonRemoval(2)}
+                      className="text-red-500 font-medium hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </label>
+                  <input
+                    value={packageDetailInput.weight}
+                    type="number"
+                    className="inline w-40 border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                    placeholder="0"
+                  />
+                </div>
+              )}
+              {packageDetailInput.addons[3].active === true && (
+                <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                  <label className="text-xs text-gray-900 flex justify-between">
+                    <div>References</div>
+                    <button
+                      onClick={() => handleAddonRemoval(3)}
+                      className="text-red-500 font-medium hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </label>
+                  <select className="p-0 pr-12 text-ellipsis text-base focus:border-none focus:outline-none rounded-lg border-0 border-transparent focus-within:ring-0">
+                    <option default>Choose...</option>
+                    <option>Ref 1</option>
+                    <option>Ref 2</option>
+                  </select>
+                </div>
+              )}
+              {packageDetailInput.addons[4].active === true && (
+                <div className="flex flex-col gap-y-2 border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-red-600 focus-within:border-red-600">
+                  <label className="text-xs text-gray-900 flex justify-between">
+                    <div>
+                      Insurance
+                      <span className="text-gray-500">&nbsp;$USD</span>
+                    </div>
+                    <button
+                      onClick={() => handleAddonRemoval(4)}
+                      className="text-red-500 font-medium hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </label>
+                  <input
+                    value={packageDetailInput.weight}
+                    type="number"
+                    className="inline w-40 border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-base"
+                    placeholder="0"
+                  />
+                </div>
+              )}
 
               <button
                 onClick={addPackage}
                 className={classNames(
-                  "inline-flex shrink-0 items-center px-4 py-2 text-sm border border-transparent font-medium rounded-md shadow-sm text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                  "grow-1 md:grow-0 flex-1 md:flex-0 whitespace-nowrap place-self-center px-4 py-5 border border-transparent font-medium text-base rounded-md shadow-sm transition-all duration-200",
                   packageDetailInput.weight == 0 ||
                     packageDetailInput.quantity == 0
-                    ? "bg-gray-300"
-                    : "bg-red-500"
+                    ? "bg-gray-200 text-gray-400 hover:bg-gray-200"
+                    : "bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                )}
+              >
+                Add Pkg.
+              </button>
+            </div>
+
+            <div className="hidden space-x-2">
+              <div className="flex flex-col">
+                <label className="text-xs pb-2 font-medium text-gray-700">
+                  Insurance
+                </label>
+                <input
+                  value={packageDetailInput.quantity}
+                  onChange={handleQuantityInput}
+                  placeholder="0"
+                  type="number"
+                  className="pl-7 w-20 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-md border-gray-300 rounded-md"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs pb-2 font-medium text-gray-700">
+                  Dry Ice
+                </label>
+                <div className="flex space-x-2 place-items-center">
+                  <input
+                    value={packageDetailInput.quantity}
+                    onChange={handleQuantityInput}
+                    placeholder="0"
+                    type="number"
+                    className="pl-7 w-20 shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-md border-gray-300 rounded-md"
+                  />
+                  <div className="relative flex items-start">
+                    <div className="ml-4 flex items-center h-5">
+                      <input
+                        type="checkbox"
+                        className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                      />
+                    </div>
+                    <div className="ml-3 text-sm">Medical use</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs pb-2 font-medium text-gray-700">
+                  Reference #1
+                </label>
+                <select className="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-md rounded-md">
+                  <option>Ref name one</option>
+                  <option>Ref name two</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs pb-2 font-medium text-gray-700">
+                  Reference #2
+                </label>
+                <select className="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-md rounded-md">
+                  <option>Ref name one</option>
+                  <option>Ref name two</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col">
+                <label className="text-xs pb-2 font-medium text-gray-700">
+                  Signature
+                </label>
+                <select className="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-md rounded-md">
+                  <option>Adult signature required</option>
+                  <option>Signature required</option>
+                  <option>Signature may be required</option>
+                  <option>Signature not required</option>
+                  <option>Default for that service</option>
+                </select>
+              </div>
+              <button
+                onClick={addPackage}
+                className={classNames(
+                  "px-4 py-2 text-sm border border-transparent font-medium rounded-md shadow-sm text-white transition-all duration-200",
+                  packageDetailInput.weight == 0 ||
+                    packageDetailInput.quantity == 0
+                    ? "bg-gray-300 text-gray-400 hover:bg-gray-300 "
+                    : "bg-red-500 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                 )}
               >
                 Add Package
@@ -968,7 +1164,7 @@ export default function NewShipment() {
 
         <Card>
           <CardTitle title="International Customs Info">
-            <span className="hidden sm:block text-right p-4 bg-red-100">
+            <span className="hidden sm:block text-right">
               International shipping requires a commercial invoice
             </span>
           </CardTitle>
@@ -1291,8 +1487,8 @@ export default function NewShipment() {
             <div className="flex space-x-4 place-items-center">
               <div className="font-base text-gray-800 text-right">
                 {!emailNotifications
-                  ? "Activate Email Notifications"
-                  : "Disable Email Notifications"}
+                  ? "Activate email notifications"
+                  : "Email notifications enabled"}
               </div>
               <button
                 type="button"
@@ -1311,25 +1507,235 @@ export default function NewShipment() {
               </button>
             </div>
           </CardTitle>
+
           {emailNotifications && (
             <CardContent>
-              <div className="rounded-md bg-blue-50 p-4">
+              <div className="rounded-xl bg-red-50 p-3 mb-6">
                 <div className="flex">
                   <div className="flex-shrink-0">
                     <InformationCircleIcon
-                      className="h-6 w-6 text-blue-300"
+                      className="h-6 w-6 text-red-300"
                       aria-hidden="true"
                     />
                   </div>
                   <div className="ml-3 flex-1 md:flex md:justify-between">
-                    <p className="text-md text-blue-700">
+                    <p className="text-md text-red-700">
                       You may set up default email notifications for your next
                       shipment in your personal settings. These notifications
                       will be used for this shipment{" "}
-                      <span className="font-bold">only</span>
+                      <span className="font-bold">only</span>.
                     </p>
                   </div>
                 </div>
+              </div>
+              <div className="ring-1 ring-gray-300 rounded-lg">
+                <table className="min-w-full divide-y divide-gray-300 rounded-lg">
+                  <thead className="">
+                    <tr className="divide-x divide-gray-300">
+                      <th
+                        scope="col"
+                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                      >
+                        Email Notification
+                      </th>
+                      <th
+                        scope="col"
+                        className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                      >
+                        On Tender
+                      </th>
+                      <th
+                        scope="col"
+                        className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                      >
+                        On Delivery
+                      </th>
+                      <th
+                        scope="col"
+                        className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                      >
+                        On Exception
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      >
+                        On Shipment
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-gray-300">
+                    <tr className="divide-x divide-gray-300">
+                      <td
+                        className={classNames(
+                          "whitespace-nowrap relative py-4 pl-4 sm:pl-6 pr-3 text-sm w-32"
+                        )}
+                      >
+                        <div className="font-medium text-gray-900">
+                          Receiver
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Tender</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Delivery</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Exception</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Shipment</div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="divide-x divide-gray-300">
+                      <td
+                        className={classNames(
+                          "whitespace-nowrap relative py-4 pl-4 sm:pl-6 pr-3 text-sm w-32"
+                        )}
+                      >
+                        <div className="font-medium text-gray-900">Sender</div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Tender</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Delivery</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Exception</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Shipment</div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr className="divide-x divide-gray-300">
+                      <td
+                        className={classNames(
+                          "whitespace-nowrap flex relative py-2 pl-4 sm:pl-6 pr-3 text-sm font-medium text-gray-900 w-80"
+                        )}
+                      >
+                        <div className="font-medium text-gray-900 my-auto">
+                          Custom
+                        </div>
+                        <input
+                          placeholder="Email..."
+                          type="text"
+                          className="ml-4 w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm border-gray-300 rounded-md"
+                        />
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Tender</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Delivery</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Exception</div>
+                        </div>
+                      </td>
+                      <td className="relative py-4">
+                        <div className="flex">
+                          <div className="ml-4 flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              className="focus:ring-red-500 h-4 w-4 text-red-600 border-gray-300 rounded"
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">On Shipment</div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </CardContent>
           )}
@@ -1360,9 +1766,21 @@ export default function NewShipment() {
           </CardTitle>
           <CardContent>
             {pickupRequired && (
-              <div className="rounded-md bg-red-50 px-4 py-2 text-md text-red-700">
-                You will be prompted to enter a pickup date and time after
-                clicking confirm and print.
+              <div className="rounded-xl bg-red-50 p-3 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <InformationCircleIcon
+                      className="h-6 w-6 text-red-300"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div className="ml-3 flex-1 md:flex md:justify-between">
+                    <p className="text-md text-red-700">
+                      You will be prompted to enter a pickup date and time after
+                      clicking confirm and print.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
             <div className="flex justify-between items-center">

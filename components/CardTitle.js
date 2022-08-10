@@ -3,14 +3,14 @@ export default function CardTitle({ title, children, button, action }) {
     <div className="">
       {/* CARD TITLE */}
       <div className="px-4 sm:px-6 flex items-center justify-between">
-        <div className="py-3 sm:py-5 bg-green-100 shrink-0">
+        <div className="py-3 sm:py-5 shrink-0">
           <h1 className="text-md sm:text-xl font-semibold text-gray-900">
             {title}
           </h1>
         </div>
 
         {button && (
-          <div className="bg-yellow-100">
+          <div className="">
             <button
               onClick={action}
               type="button"
@@ -21,7 +21,7 @@ export default function CardTitle({ title, children, button, action }) {
           </div>
         )}
 
-        {children && <div className="bg-yellow-100">{children}</div>}
+        {children && <div className="">{children}</div>}
       </div>
     </div>
   );
